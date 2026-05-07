@@ -9,12 +9,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Debug: Log all environment variables
-console.log('Available env vars:', Object.keys(process.env));
-console.log('MONGODB_URL:', process.env.MONGODB_URL);
-console.log('MONGO_URL:', process.env.MONGO_URL);
-
-const mongoUrl = process.env.MONGODB_URL || process.env.MONGO_URL;
+const mongoUrl = process.env.MONGO_URL;
 console.log('Using URL:', mongoUrl);
 
 mongoose.connect(mongoUrl)
@@ -25,6 +20,11 @@ app.use('/api/auth', authRoutes);
 
 app.get('/', (req, res) => {
   res.send('CityGo API is running');
+});
+
+app.use((err, req, res, next) => {
+  console.error('Error:', err);
+  res.status(500).json({ msg: err.message });
 });
 
 const PORT = process.env.PORT || 8080;
